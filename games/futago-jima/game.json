@@ -1,0 +1,10 @@
+{
+  "name": "Twin Isles",
+  "consumable": "Treasure Key",
+  "price": "1000000000000000000",
+  "outcomes": [
+    { "name": "Pebble", "chanceBps": 6000, "reward": "500000000000000000" },
+    { "name": "Golden Daruma", "chanceBps": 3000, "reward": "1000000000000000000" },
+    { "name": "Lucky Cat", "chanceBps": 1000, "reward": "3000000000000000000" }
+  ]
+}
