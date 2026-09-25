@@ -1,0 +1,44 @@
+# Builds the Twin Isles game and publishes the static preview to GitHub Pages.
+# Settings → Pages → Source: "GitHub Actions". Players still need a wallet on
+# Robinhood mainnet holding a Generations Friend (generation >= 1).
+name: Twin Isles preview (GitHub Pages)
+on:
+  push:
+    branches: [main]
+    paths: ["games/futago-jima/**", ".github/workflows/twin-isles-pages.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: twin-isles-pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: npx friendsdk check games/futago-jima
+      - run: npx friendsdk build games/futago-jima
+      - run: touch games/futago-jima/.friendsdk/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: games/futago-jima/.friendsdk
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
