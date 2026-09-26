@@ -1,11 +1,13 @@
-# Builds the Twin Isles game and publishes the static preview to GitHub Pages.
+# Builds the Twin Isles and Shadow Friends games and publishes the static previews to GitHub Pages.
+#   Twin Isles     -> https://<user>.github.io/friendsdk/
+#   Shadow Friends -> https://<user>.github.io/friendsdk/kageboshi/
 # Settings → Pages → Source: "GitHub Actions". Players still need a wallet on
 # Robinhood mainnet holding a Generations Friend (generation >= 1).
 name: Twin Isles preview (GitHub Pages)
 on:
   push:
     branches: [main]
-    paths: ["games/futago-jima/**", ".github/workflows/twin-isles-pages.yml"]
+    paths: ["games/futago-jima/**", "games/kageboshi/**", ".github/workflows/twin-isles-pages.yml"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -28,11 +30,18 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run build
       - run: npx friendsdk check games/futago-jima
+      - run: npx friendsdk check games/kageboshi
       - run: npx friendsdk build games/futago-jima
-      - run: touch games/futago-jima/.friendsdk/.nojekyll
+      - run: npx friendsdk build games/kageboshi
+      - run: |
+          mkdir -p site
+          cp -R games/futago-jima/.friendsdk/. site/
+          mkdir -p site/kageboshi
+          cp -R games/kageboshi/.friendsdk/. site/kageboshi/
+          touch site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: games/futago-jima/.friendsdk
+          path: site
   deploy:
     needs: build
     runs-on: ubuntu-latest
