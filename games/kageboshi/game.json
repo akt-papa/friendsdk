@@ -1,0 +1,10 @@
+{
+  "name": "Shadow Friends",
+  "consumable": "Lantern",
+  "price": "1000000000000000000",
+  "outcomes": [
+    { "name": "Small Luck", "chanceBps": 6000, "reward": "500000000000000000" },
+    { "name": "Good Luck", "chanceBps": 3000, "reward": "1000000000000000000" },
+    { "name": "Great Luck", "chanceBps": 1000, "reward": "3000000000000000000" }
+  ]
+}
