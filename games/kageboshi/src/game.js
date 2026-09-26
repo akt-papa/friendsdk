@@ -185,8 +185,8 @@ function makeStage(i) {
   Object.assign(G, { won: false, running: false, hints: 0, turns: 0, time: 0, winT: -1, vel: [0, 0, 0], attract: false, resetAnim: null }); hideOracle(); tgtSet.clear(); for (const [x, y] of maskOf(st)) tgtSet.add(x + "," + y);
   paperMat.emissiveIntensity = 0; glowLight.intensity = 0;
   hud(); drawCard();
-  if (i === 1) later(400, () => toast(TOUCH ? J("ここから たてにも回します：上下になぞる", "Tilting starts here: swipe up or down") : J("ここから たてにも回します：上下にドラッグ", "Tilting starts here: drag up or down"), 3200));
-  if (i === 9) later(400, () => { toast(TOUCH ? J("ここから ひねりも使います：2本指で回す か 右下の ⟲⟳ を長押し", "Twisting starts here: rotate with two fingers or hold ⟲ ⟳") : J("ここから ひねりも使います：右下の ⟲⟳ を長押し か Q・Eキー", "Twisting starts here: hold ⟲ ⟳ (bottom right) or press Q / E"), 4200); pulseTwist(); });
+  if (i === 1) later(400, () => toast(TOUCH ? J("ここから、たてにも回します（上下になぞる）", "Now you can tilt too: swipe up or down") : J("ここから、たてにも回します（上下にドラッグ）", "Now you can tilt too: drag up or down"), 3200));
+  if (i === 9) later(400, () => { toast(TOUCH ? J("ここから、ひねりも使います（2本指で回すか、右下の⟲⟳を長押し）", "Now you can twist too: use two fingers or hold ⟲⟳ (bottom right)") : J("ここから、ひねりも使います（右下の⟲⟳を長押しか、Q・E キー）", "Now you can twist too: hold ⟲⟳ (bottom right) or press Q / E"), 4200); pulseTwist(); });
 }
 
 /* 人のやり方(1本の軸で影が一番合う所まで回す、を軸を変えてくり返す)で解けるかを確かめる */
@@ -216,9 +216,9 @@ const qa = new THREE.Quaternion();
 function axesNow() { return S.free ? [U, R, N] : [U, G.stage.tier >= 2 ? R : null, G.stage.tier >= 3 ? N : null].filter(Boolean); }
 function rotate(axis, ang) { qa.setFromAxisAngle(axis, ang); obj.quaternion.premultiply(qa).normalize(); }
 let twistHold = 0;
-function resetTurn() { if (!S.started || G.won || paused()) return; obj.quaternion.copy(G.q0); G.vel = [0, 0, 0]; pluck(392, 0, 0.07, 0.6); pluck(293.66, 0.08, 0.07, 0.8); toast(J("はじめの向きにもどしました", "Back to the starting angle")); }
+function resetTurn() { if (!S.started || G.won || paused()) return; obj.quaternion.copy(G.q0); G.vel = [0, 0, 0]; pluck(392, 0, 0.07, 0.6); pluck(293.66, 0.08, 0.07, 0.8); toast(J("はじめの向きに戻しました", "Back to the starting angle")); }
 $("bReset").addEventListener("click", resetTurn);
-$("stTier").addEventListener("click", () => { S.free = !S.free; hud(); sfxTap(); toast(S.free ? J("自由に回せます。ひねるのは右下の ⟲⟳", "Free turning. Twist with ⟲ ⟳ at bottom right") : J("回す向きを決めて回します", "Turning one way at a time"), 2600); if (S.free) pulseTwist(); });
+$("stTier").addEventListener("click", () => { S.free = !S.free; hud(); sfxTap(); toast(S.free ? J("自由に回せます。ひねるのは右下の⟲⟳", "Free turn: twist with ⟲⟳ (bottom right)") : J("回す向きを決めて回します", "One direction at a time"), 2600); if (S.free) pulseTwist(); });
 for (const [id, dir] of [["bTwL", 1], ["bTwR", -1]]) { const b = $(id); b.addEventListener("pointerdown", e => { e.preventDefault(); if (paused()) return; if (!G.running && !G.won) startClock(); twistHold = dir; audioInit(); }); for (const ev of ["pointerup", "pointerleave", "pointercancel"]) b.addEventListener(ev, () => { if (twistHold) { twistHold = 0; G.turns++; } }); }
 const keys = new Set();
 on(window, "keydown", e => { if (paused()) return; if (!S.started || G.won) { if (e.key === "Enter" && !$("title").hidden) startGame(); return; } const k = e.key.toLowerCase(); if (["arrowleft", "arrowright", "arrowup", "arrowdown", "a", "d", "w", "s", "q", "e"].includes(k)) { e.preventDefault(); if (!G.running) startClock(); keys.add(k); } if (k === "h") useHint(); if (k === "r") resetTurn(); });
@@ -228,7 +228,7 @@ function startClock() { G.running = true; G.t0 = performance.now() - G.time * 10
 
 /* ---------- ランプの色(見た目だけ・無料) ---------- */
 const LIGHTS = [
-  { id: "andon", j: "行灯", e: "Lantern", key: "#ffd29a", glow: "#ff9e3d", beam: "#ffb766", bg: "#0b0806", hemi: "#3c2c4a" },
+  { id: "andon", j: "行灯", e: "Andon lamp", key: "#ffd29a", glow: "#ff9e3d", beam: "#ffb766", bg: "#0b0806", hemi: "#3c2c4a" },
   { id: "moon", j: "月あかり", e: "Moonlight", key: "#cfe0ff", glow: "#8fb4ff", beam: "#9cc0ff", bg: "#05070d", hemi: "#1c2a4a" },
   { id: "beni", j: "紅", e: "Crimson", key: "#ff9c8a", glow: "#ff4a3a", beam: "#ff6a55", bg: "#0d0505", hemi: "#4a1c24" },
   { id: "hotaru", j: "蛍", e: "Firefly", key: "#d8ffb0", glow: "#9dff5a", beam: "#b6ff7a", bg: "#050a05", hemi: "#1f3a22" } ];
@@ -250,7 +250,7 @@ async function refresh() { if (!ECON.client) return null; const s = await ECON.c
 async function act(work, after) {
   if (ECON.busy || !ECON.client) return; ECON.busy = true; ECON.err = ""; econUi();
   try { await work(); await refresh(); if (after) after(); }
-  catch (e) { ECON.err = e instanceof Error ? e.message : J("うまくいきませんでした", "Action failed"); toast(J("取り消しました", "Cancelled"), 2200); await refresh().catch(() => {}); }
+  catch (e) { ECON.err = e instanceof Error ? e.message : J("うまくいきませんでした", "Something went wrong"); toast(J("取り消しました", "Canceled"), 2200); await refresh().catch(() => {}); }
   finally { ECON.busy = false; econUi(); if (!$("shop").hidden) shopPanel(); }
 }
 const pendingPlay = () => ECON.snap ? ECON.snap.plays.find(p => p.outcomeId === null) : null;
@@ -268,10 +268,10 @@ function oracleSteps(n) {
 }
 function stepText(s) {
   if (s.done) return J("これで影が合う", "…and the shadow fits");
-  const deg = Math.abs(s.a) * 180 / Math.PI, amt = deg < 22 ? J("少し", "a little") : deg < 55 ? J("ぐっと", "a good way") : deg < 120 ? J("大きく(4分の1回転ほど)", "about a quarter turn") : J("ぐるっと半回転", "about half a turn");
+  const deg = Math.abs(s.a) * 180 / Math.PI, amt = deg < 22 ? J("少し", "a little") : deg < 55 ? J("ぐっと", "a fair bit") : deg < 120 ? J("大きく（4分の1回転ほど）", "about a quarter turn") : J("ぐるっと（半回転ほど）", "about half a turn");
   if (s.ax === U) return s.a > 0 ? J(`右へ${amt}回す`, `Turn right ${amt}`) : J(`左へ${amt}回す`, `Turn left ${amt}`);
-  if (s.ax === R) return s.a > 0 ? J(`下へ${amt}傾ける`, `Tilt down ${amt}`) : J(`上へ${amt}傾ける`, `Tilt up ${amt}`);
-  return s.a > 0 ? J(`⟲ 左に${amt}ひねる`, `Twist left ⟲ ${amt}`) : J(`⟳ 右に${amt}ひねる`, `Twist right ⟳ ${amt}`);
+  if (s.ax === R) return s.a > 0 ? J(`下へ${amt}回す`, `Tilt down ${amt}`) : J(`上へ${amt}回す`, `Tilt up ${amt}`);
+  return s.a > 0 ? J(`⟲ 左へ${amt}ひねる`, `⟲ Twist left ${amt}`) : J(`⟳ 右へ${amt}ひねる`, `⟳ Twist right ${amt}`);
 }
 function useHint() {
   if (G.won || !S.started || paused() || ECON.busy) return;
@@ -301,14 +301,14 @@ function useHint() {
 }
 function showOracle(i, no, steps) {
   const el = $("oracle"); if (!el) return;
-  const lines = i === 3 ? [{ t: J("はじめの向きに戻しました", "Back to the starting angle") }] : steps.length ? steps : [{ t: J("もう、ほとんど合っている", "You are almost there"), done: true }];
+  const lines = i === 3 ? [{ t: J("はじめの向きに戻しました", "Back to the starting angle") }] : steps.length ? steps : [{ t: J("もう、ほとんど合っている", "Almost there"), done: true }];
   el.innerHTML = `<div class="oHead"><b>${lname(i)}</b><span>${J(`おみくじ 第${KAN(((no * 37) % 98) + 1)}番のお告げ`, `Omikuji No. ${((no * 37) % 98) + 1}`)}</span></div><ol>${lines.map((l, k) => `<li class="${l.done ? "done" : ""}"><i>${l.done ? "◎" : i === 3 ? "・" : J("一二三四"[k] || k + 1, String(k + 1))}</i>${l.t}</li>`).join("")}</ol><div class="oBar"><i id="oracleBar"></i></div>`;
   el.className = i === 3 ? "kyo" : ""; el.hidden = false; G.oracleT = ORACLE_SECS;
 }
 function hideOracle() { const el = $("oracle"); if (el) el.hidden = true; G.oracleT = 0; }
 function econUi() {
   const s = ECON.snap, pre = !ECON.client || ECON.client.mode !== "chain";
-  $("rf").textContent = s ? `${fmtRF(s.rfBalance)} RF${pre ? J("(仮)", " (sim)") : ""}` : "— RF";
+  $("rf").textContent = s ? `${fmtRF(s.rfBalance)} RF${pre ? J("（仮）", " (sim)") : ""}` : "— RF";
   const kept = s && ECON.client ? s.inventory.reduce((a, n, k) => a + (ECON.client.definition.outcomes[k]?.reward > 0n ? n : 0n), 0n) : 0n;
   $("lanternCnt").textContent = String(kept); $("lanternCnt").hidden = kept === 0n;
   $("hintSub").textContent = pendingPlay() ? J("引いたおみくじを開く", "Open your omikuji") : J("1回 1 RF・次の手を教えてくれる", "1 RF · tells you the next moves");
@@ -318,13 +318,13 @@ function econUi() {
 function confirmPanel() {
   const box = $("shopBox"), s = ECON.snap, def = ECON.client.definition, pre = ECON.client.mode !== "chain";
   const after = s.consumables > 0n ? s.rfBalance : s.rfBalance - def.price;
-  const what = [J("次の3手＋お代が返る", "next 3 moves + refund"), J("次の2手", "next 2 moves"), J("次の1手", "next move"), J("はじめの向きに戻る", "back to the start")];
+  const what = [J("次の3手＋お代が返る", "next 3 moves + refund"), J("次の2手", "next 2 moves"), J("次の1手", "next move"), J("はじめの向きに戻る", "back to the starting angle")];
   const rows = def.outcomes.map((o, i) => `<tr><td><b>${lname(i)}</b></td><td>${(o.chanceBps / 100).toFixed(0)}%</td><td>${what[i] || ""}</td></tr>`).join("");
   $("shop").hidden = false;
-  box.innerHTML = `<h2>${J("おみくじを引きますか？", "Draw an omikuji?")} ${pre ? `<small>${J("RF はすべて仮(プレビュー)", "All RF is simulated (preview)")}</small>` : ""}</h2>
-    <div class="bal"><span>${J("お代", "Price")}</span><b>${fmtRF(def.price)} RF</b><span>${J("フレンドの RF", "Friend RF")}</span><b>${fmtRF(s.rfBalance)} → ${fmtRF(after)} RF</b></div>
+  box.innerHTML = `<h2>${J("おみくじを引きますか？", "Draw an omikuji?")} ${pre ? `<small>${J("RF はすべて仮（プレビュー）", "All RF is simulated (preview)")}</small>` : ""}</h2>
+    <div class="bal"><span>${J("お代", "Price")}</span><b>${fmtRF(def.price)} RF</b><span>${J("フレンドの RF", "Friend's RF")}</span><b>${fmtRF(s.rfBalance)} → ${fmtRF(after)} RF</b></div>
     <table class="odds"><thead><tr><th>${J("結果", "Result")}</th><th>${J("確率", "Chance")}</th><th>${J("中身", "What it does")}</th></tr></thead><tbody>${rows}</tbody></table>
-    <p class="dim">${J("引くと、この面は★3になりません。", "Drawing costs the third star on this stage.")}${opts.trial ? "" : " " + J("このあと、公式の確認画面(英語)も出ます。", "The official confirmation appears next.")}</p>
+    <p class="dim">${J("引くと、この面は★3になりません。", "Drawing one rules out ★★★ on this stage.")}${opts.trial ? "" : " " + J("このあと、公式の確認画面（英語）も出ます。", "The official confirmation appears next.")}</p>
     <div class="row"><button type="button" class="btn gold" data-act="omiGo">${J("引く", "Draw")}</button><button type="button" class="btn" data-act="close">${J("やめる", "Cancel")}</button></div>`;
   box.querySelector('[data-act="omiGo"]').focus();
 }
@@ -332,20 +332,20 @@ function confirmPanel() {
 function shopPanel() {
   const box = $("shopBox"), s = ECON.snap, def = ECON.client ? ECON.client.definition : null, pre = !ECON.client || ECON.client.mode !== "chain";
   $("shop").hidden = false;
-  const head = `<h2>${J("おみくじ", "Omikuji")} <small>${pre ? J("RF はすべて仮(プレビュー)", "All RF is simulated (preview)") : J("本物の RF", "Live RF")}</small></h2>`;
+  const head = `<h2>${J("おみくじ", "Omikuji")} <small>${pre ? J("RF はすべて仮（プレビュー）", "All RF is simulated (preview)") : J("本物の RF", "Live RF")}</small></h2>`;
   if (!def) { box.innerHTML = `${head}<p>${J("この画面では RF を使えません。", "RF is not available here.")}</p><div class="row"><button type="button" class="btn" data-act="close">${J("とじる", "Close")}</button></div>`; return; }
   if (!s) { box.innerHTML = `${head}<p>${J("読み込み中…", "Loading…")}</p>`; refresh().then(shopPanel, () => { box.innerHTML = `${head}<p class="err">${J("読み込めませんでした", "Could not load")}</p><div class="row"><button type="button" class="btn" data-act="retry">${J("もう一度", "Retry")}</button><button type="button" class="btn" data-act="close">${J("とじる", "Close")}</button></div>`; }); return; }
-  const what = [J("次の3手を教えてくれる", "shows the next 3 moves"), J("次の2手を教えてくれる", "shows the next 2 moves"), J("次の1手を教えてくれる", "shows the next move"), J("はじめの向きに戻される", "sends you back to the start")];
+  const what = [J("次の3手を教えてくれる", "shows the next 3 moves"), J("次の2手を教えてくれる", "shows the next 2 moves"), J("次の1手を教えてくれる", "shows the next move"), J("はじめの向きに戻される", "resets to the starting angle")];
   const rows = def.outcomes.map((o, i) => `<tr><td><b>${lname(i)}</b></td><td>${(o.chanceBps / 100).toFixed(0)}%</td><td>${what[i] || ""}${o.reward > 0n ? J(`・お代 ${fmtRF(o.reward)} RF が返る`, ` · ${fmtRF(o.reward)} RF back`) : ""}</td></tr>`).join("");
   const kept = def.outcomes.map((o, i) => ({ o, i, n: s.inventory[i] || 0n })).filter(x => x.n > 0n && x.o.reward > 0n);
   const keptHtml = kept.length ? kept.map(({ o, i, n }) => `<li><span>${J(`${lname(i)}の返金`, `${lname(i)} refund`)} ×${n}</span><button type="button" class="btn sm" data-act="redeem" data-i="${i}" ${ECON.busy ? "disabled" : ""}>${J(`受け取る +${fmtRF(o.reward)} RF`, `Collect +${fmtRF(o.reward)} RF`)}</button></li>`).join("") : `<li class="dim">${J("受け取れる返金はありません", "Nothing to collect")}</li>`;
   const pend = pendingPlay();
   box.innerHTML = `${head}
-    <p class="lead2">${J("「おみくじ」ボタンで1回 1 RF。引いたおみくじに、いまから正解に近づく回し方が書いてあります。", "Press Omikuji: 1 RF per draw. The slip tells you how to turn the pieces to get closer to the answer.")}</p>
-    <div class="bal"><span>${J("フレンドの RF", "Friend RF")}</span><b>${fmtRF(s.rfBalance)} RF</b><span>${J("お代", "Price")}</span><b>${fmtRF(def.price)} RF</b></div>
+    <p class="lead2">${J("「おみくじ」ボタンを押すと、1回 1 RF で引けます。引いたおみくじには、いまの向きから正解に近づく回し方が書いてあります。", "Press the Omikuji button to draw one for 1 RF. The slip shows how to turn the pieces from where they are now to get closer to the answer.")}</p>
+    <div class="bal"><span>${J("フレンドの RF", "Friend's RF")}</span><b>${fmtRF(s.rfBalance)} RF</b><span>${J("お代", "Price")}</span><b>${fmtRF(def.price)} RF</b></div>
     ${pend ? `<div class="row"><button type="button" class="btn gold" data-act="draw" ${ECON.busy ? "disabled" : ""}>${J("引いたおみくじを開く", "Open your omikuji")}</button></div>` : ""}
     <table class="odds"><thead><tr><th>${J("結果", "Result")}</th><th>${J("確率", "Chance")}</th><th>${J("中身", "What it does")}</th></tr></thead><tbody>${rows}</tbody></table>
-    <p class="dim">${J("うでまえで確率は変わりません。おみくじを引くと、その面は★3になりません。", "Skill never changes the odds. Drawing one costs the third star on that stage.")}</p>
+    <p class="dim">${J("うでまえで確率は変わりません。おみくじを引くと、その面は★3になりません。", "Skill never changes the odds. Drawing one rules out ★★★ on that stage.")}</p>
     <h3>${J("大吉の返金", "Great Luck refunds")}</h3><ul class="kept">${keptHtml}</ul>
     ${ECON.err ? `<p class="err">${ECON.err}</p>` : ""}
     <div class="row"><button type="button" class="btn" data-act="close">${J("とじる", "Close")}</button></div>`;
@@ -355,7 +355,7 @@ on(root, "click", e => { const b = e.target.closest && e.target.closest("[data-a
   else if (a === "retry") shopPanel();
   else if (a === "draw") { $("shop").hidden = true; useHint(); }
   else if (a === "omiGo") { $("shop").hidden = true; G.omiOk = true; useHint(); }
-  else if (a === "redeem") { const i = +b.dataset.i; act(() => ECON.client.redeem(i + 1, 1n), () => { pluck(784, 0, 0.08, 0.8); toast(J("お代を受け取りました", "Refund collected"), 2000); }); } });
+  else if (a === "redeem") { const i = +b.dataset.i; act(() => ECON.client.redeem(i + 1, 1n), () => { pluck(784, 0, 0.08, 0.8); toast(J("返金を受け取りました", "Refund collected"), 2000); }); } });
 /* ---------- おみくじの演出: みくじ筒を振って棒を出し、番号の紙を開く ----------
    見た目だけの演出。結果は SDK の settle で決まった outcome をそのまま見せる */
 const KAN = n => { const d = "〇一二三四五六七八九"; if (n < 10) return d[n]; const t = Math.floor(n / 10), o = n % 10; return (t > 1 ? d[t] : "") + "十" + (o ? d[o] : ""); };
@@ -363,8 +363,8 @@ function omikuji(i, playId, steps, done) {
   const el = $("omi"), lang = S.lang === "ja" ? "ja" : "en", no = ((playId * 37) % 98) + 1, o = ECON.client.definition.outcomes[i];
   const fl = CATS[lang].map((c, k) => [c, FORTUNE[lang][i][k][(no + k * 3) % 4]]);
   const fort = `<div class="pSep"></div><ul class="pFort">${fl.map(([c, t]) => `<li><b>${c}</b>${t}</li>`).join("")}</ul>`;
-  const body = i === 3 ? `<p class="pKyo">${J("はじめの向きから、やり直すべし", "Start again from the beginning")}</p>`
-    : `<div class="pHead">${J("お告げ", "The oracle says")}</div><ol class="pSteps">${(steps.length ? steps : [{ t: J("もう、ほとんど合っている", "You are almost there"), done: true }]).map((l, k) => l.done ? `<li class="done"><i>◎</i>${l.t}</li>` : `<li><i>${J("一二三四"[k] || "", String(k + 1) + ".")}</i>${l.t}</li>`).join("")}</ol>`;
+  const body = i === 3 ? `<p class="pKyo">${J("はじめの向きから、やり直すべし", "Begin again from the starting angle")}</p>`
+    : `<div class="pHead">${J("お告げ", "The oracle says")}</div><ol class="pSteps">${(steps.length ? steps : [{ t: J("もう、ほとんど合っている", "Almost there"), done: true }]).map((l, k) => l.done ? `<li class="done"><i>◎</i>${l.t}</li>` : `<li><i>${J("一二三四"[k] || "", String(k + 1) + ".")}</i>${l.t}</li>`).join("")}</ol>`;
   el.className = "omi" + (lang === "en" ? " en" : "") + (i === 0 ? " great" : i === 1 ? " good" : i === 3 ? " kyo" : "") + (RM ? " rm" : "");
   el.innerHTML = `<div class="omiBg"></div><div class="omiStage">
     <div class="tsBox"><div class="tsutsuWrap"><div class="stick"></div><div class="tsutsu"><svg viewBox="0 0 120 250" aria-hidden="true"><defs><linearGradient id="wd" x1="0" x2="1"><stop offset="0" stop-color="#5a3518"/><stop offset=".22" stop-color="#9a6634"/><stop offset=".5" stop-color="#c58d52"/><stop offset=".78" stop-color="#9a6634"/><stop offset="1" stop-color="#4a2a12"/></linearGradient></defs>
@@ -378,9 +378,9 @@ function omikuji(i, playId, steps, done) {
       <div class="pNo">${lang === "ja" ? `第${KAN(no)}番` : `No. ${no}`}</div>
       <div class="pLuck">${LUCK[i] ? (lang === "ja" ? LUCK[i].j : LUCK[i].e) : ""}</div>
       <div class="pMain">${body}</div>${fort}
-      ${o.reward > 0n ? `<div class="pPrize">${J(`お代 ${fmtRF(o.reward)} RF をお返し`, `${fmtRF(o.reward)} RF refunded`)}</div>` : ""}
+      ${o.reward > 0n ? `<div class="pPrize">${J(`お代 ${fmtRF(o.reward)} RF をお返しします`, `${fmtRF(o.reward)} RF refunded`)}</div>` : ""}
     </div></div></div></div>
-    <p class="omiTap">${J("タップで閉じる(お告げは左上に30秒のこります)", "Tap to close (the oracle stays at the top left for 30 s)")}</p>`;
+    <p class="omiTap">${J("タップでとじる（お告げは左上に30秒残ります）", "Tap to close (the message stays at the top left for 30 s)")}</p>`;
   el.hidden = false; S.omi = true; applyPause();
   let phase = 0, closed = false;
   /* 音: 筒のカラカラ → 棒の「コン」→ 紙 → 鈴(大吉は琴の音、凶は低い音) */
@@ -426,10 +426,10 @@ function win() {
 function showClear() {
   const { stars, time } = G.result; const last = G.st >= STAGES.length - 1;
   $("clearStars").textContent = "★".repeat(stars) + "☆".repeat(3 - stars);
-  $("clearInfo").textContent = J(`${time.toFixed(1)}秒 ・ ${G.turns}回まわした${G.hints ? ` ・ ヒント${G.hints}回` : ""}`, `${time.toFixed(1)} s · ${G.turns} turns${G.hints ? ` · ${G.hints} hint${G.hints > 1 ? "s" : ""}` : ""}`);
-  $("clearHint").textContent = stars < 3 ? J(`目標 ${G.stage.par}秒以内・ヒントなしで★3`, `★★★: under ${G.stage.par} s with no hint`) : J("かんぺき!", "Perfect!");
-  $("bNext").textContent = last ? J("はじめから", "Play again") : J("つぎの影へ", "Next shadow");
-  $("clearTitle").textContent = !ME.mask ? J("影がぴたりと重なった。", "The shadow fits perfectly.") : last && G.stage.me ? J(`最後の影は、あなたのフレンド ${ME.id} でした。`, `The last shadow was your own Friend ${ME.id}.`) : J(`影から、あなたのフレンド ${ME.id} が現れた。`, `Your Friend ${ME.id} stepped out of the shadow.`);
+  $("clearInfo").textContent = J(`${time.toFixed(1)}秒 ・ ${G.turns}回まわした${G.hints ? ` ・ おみくじ${G.hints}回` : ""}`, `${time.toFixed(1)} s · ${G.turns} turns${G.hints ? ` · ${G.hints} omikuji` : ""}`);
+  $("clearHint").textContent = stars < 3 ? J(`★3の条件：${G.stage.par}秒以内・おみくじなし`, `★★★: within ${G.stage.par} s, no omikuji`) : J("かんぺき！", "Perfect!");
+  $("bNext").textContent = last ? J("はじめから", "Play again") : J("次の影へ", "Next shadow");
+  $("clearTitle").textContent = !ME.mask ? J("影がぴたりと重なった。", "The shadow fits perfectly.") : last && G.stage.me ? J(`最後の影は、あなたのフレンド ${ME.id} でした。`, `The last shadow was your own Friend ${ME.id}.`) : J(`影から、あなたのフレンド ${ME.id} が現れた。`, `Your Friend ${ME.id} steps out of the shadow.`);
   $("clear").hidden = false; $("bNext").focus();
 }
 $("bNext").addEventListener("click", () => { $("clear").hidden = true; makeStage(G.st >= STAGES.length - 1 ? 0 : G.st + 1); sfxTap(); });
@@ -438,7 +438,7 @@ $("bRetry").addEventListener("click", () => { $("clear").hidden = true; makeStag
 /* ---------- HUD ---------- */
 function hud() { updateHow();
   $("stNo").textContent = `${G.st + 1} / ${STAGES.length}`;
-  $("stTierTxt").textContent = S.free ? J("自由に回す", "Free turn") : [J("よこに回す", "Turn sideways"), J("たて・よこに回す", "Turn up/down & sideways"), J("たて・よこ・ひねる", "Up/down, sideways & twist")][G.stage.tier - 1];
+  $("stTierTxt").textContent = S.free ? J("自由に回す", "Free turn") : [J("よこに回す", "Turn left/right"), J("たて・よこに回す", "Turn & tilt"), J("たて・よこ・ひねる", "Turn, tilt & twist")][G.stage.tier - 1];
   $("stTier").setAttribute("aria-pressed", String(S.free)); $("stTier").classList.toggle("on", S.free);
   econUi();
   $("twist").hidden = G.stage.tier < 3 && !S.free; $("bReset").disabled = G.won;
@@ -458,10 +458,10 @@ function updateHow() { if (!G.stage) return; const el = $("how"), ja = S.lang ==
   const tier = S.free ? 0 : G.stage.tier, rows = [];
   const row = (key, jl, jv, el_, ev) => rows.push(`<span class="${key === newOp ? "new" : ""}"><b>${ja ? jl : el_}</b>${ja ? jv : ev}</span>`);
   if (tier === 0) row("free", "回す", TOUCH ? "好きな向きになぞる" : "好きな向きにドラッグ", "Turn", TOUCH ? "swipe any way" : "drag any way");
-  else { row("yoko", "よこ", TOUCH ? "左右になぞる" : "左右にドラッグ", "Sideways", TOUCH ? "swipe left/right" : "drag left/right");
+  else { row("yoko", "よこ", TOUCH ? "左右になぞる" : "左右にドラッグ", "Turn", TOUCH ? "swipe left/right" : "drag left/right");
     if (tier >= 2) row("tate", "たて", TOUCH ? "上下になぞる" : "上下にドラッグ", "Tilt", TOUCH ? "swipe up/down" : "drag up/down"); }
-  if (tier === 0 || tier === 3) row("hineru", "ひねる", TOUCH ? "2本指 か ⟲⟳長押し" : "⟲⟳長押し か Q・E", "Twist", TOUCH ? "two fingers or hold ⟲⟳" : "hold ⟲⟳ or Q / E");
-  row("", "もどす", TOUCH ? "↺" : "↺ か R", "Reset", TOUCH ? "↺" : "↺ or R");
+  if (tier === 0 || tier === 3) row("hineru", "ひねる", TOUCH ? "2本指か ⟲⟳ 長押し" : "⟲⟳ 長押しか Q・E キー", "Twist", TOUCH ? "two fingers or hold ⟲⟳" : "hold ⟲⟳ or Q / E");
+  row("", "もどす", TOUCH ? "↺" : "↺ か R キー", "Reset", TOUCH ? "↺" : "↺ or R");
   el.innerHTML = rows.join(""); }
 function pulseTwist() { const el = $("twist"); el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse"); }
 function applyLang() {

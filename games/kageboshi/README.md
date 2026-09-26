@@ -52,7 +52,7 @@ node build-engine.mjs
   the pieces reassemble as your selected Friend (from the SDK's canonical sprite)
   and step out of the shadow. Stage 12's goal is your own Friend's silhouette.
 - Stars: 1 for a clear, 2 within the par time, 3 within par without a hint.
-- Lamp colour (andon lamp, moonlight, crimson, firefly) is purely cosmetic and free.
+- Lamp color (andon lamp, moonlight, crimson, firefly) is purely cosmetic and free.
 
 ### Controls
 
