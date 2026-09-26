@@ -1,6 +1,6 @@
 # Shadow Friends (かげぼうし) · FriendSDK v0.1.2
 
-A night shadow-theatre puzzle in 3D. Pieces float between a paper lantern and a
+A night shadow-theatre puzzle in 3D. Pieces float between an andon lamp and a
 shoji screen. Turn them until their shadow matches the silhouette card. When the
 shadow fits, the pieces fly apart and reassemble as **your own Friend**, stepping
 out of the shadow. The twelfth and last shadow is the silhouette of your own
@@ -52,7 +52,7 @@ node build-engine.mjs
   the pieces reassemble as your selected Friend (from the SDK's canonical sprite)
   and step out of the shadow. Stage 12's goal is your own Friend's silhouette.
 - Stars: 1 for a clear, 2 within the par time, 3 within par without a hint.
-- Lamp colour (Lantern, Moonlight, Crimson, Firefly) is purely cosmetic and free.
+- Lamp colour (andon lamp, moonlight, crimson, firefly) is purely cosmetic and free.
 
 ### Controls
 
@@ -64,7 +64,7 @@ node build-engine.mjs
 | Click the turning-mode chip | Free turning on/off |
 | Arrow keys / WASD | Turn with the keyboard |
 | ↺ button or R | Back to the starting angle |
-| Hint button | Light a lantern (see below) |
+| Omikuji button | Draw a fortune slip that lists the next moves (see below) |
 | Enter | Start from the title |
 
 A short control guide appears next to the buttons on the stages that introduce
@@ -77,31 +77,35 @@ the tab is hidden.
 
 ## Economy (all simulated)
 
-The SDK chance-game client powers the hint lanterns:
+The hint is an **omikuji** (a Japanese fortune slip), powered by the SDK chance-game client:
 
 | Rule | Exact value |
 | --- | --- |
-| Lantern price | 1 RF (`1000000000000000000` base units) |
-| Small Luck (小吉) | 60 % / 6,000 bps; a 0.5 RF charm |
-| Good Luck (中吉) | 30 % / 3,000 bps; a 1 RF charm |
-| Great Luck (大吉) | 10 % / 1,000 bps; a 3 RF charm |
-| Expected reward | 0.9 RF per lantern (0.1 RF sink per lantern) |
-| Consumable | Lighting one lantern shows the hint for 15 s and draws exactly one fortune |
-| Backing | Each purchased or pending lantern reserves 3 RF; kept charms reserve their fixed value |
+| Omikuji price | 1 RF (`1000000000000000000` base units) |
+| Great Luck (大吉) | 10 % / 1,000 bps; the slip lists the next **3 moves**; the 1 RF price is refunded |
+| Good Luck (中吉) | 30 % / 3,000 bps; the next **2 moves** |
+| Small Luck (小吉) | 45 % / 4,500 bps; the next **move** |
+| Bad Luck (凶) | 15 % / 1,500 bps; the pieces turn back to the starting angle |
+| Expected reward | 0.1 RF per draw (0.9 RF sink per draw) |
+| Consumable | One omikuji is drawn exactly once and produces one result |
+| Backing | Each purchased or pending omikuji reserves 1 RF (the Great Luck refund); a kept refund reserves its fixed value |
 | Redemption | Fixed value, no expiry, to the selected Friend's canonical wallet in a future approved integration |
 
-- **Buy** a lantern from the Lantern panel (tap the RF chip, or the hint button
-  when you have none): `client.buy(1n)`.
-- **Light** it with the hint button: `client.play(1n)` then `client.settle`.
-  For 15 seconds every piece whose shadow falls inside the goal glows gold and
-  every piece whose shadow sticks out blinks red. The lantern's flame also draws
-  one fortune; the charm it leaves is shown in the Lantern panel.
-- **Redeem** a charm for its fixed RF value: `client.redeem(outcomeId, 1n)`.
-- An unsettled lantern (for example after a declined confirmation) can be
-  finished from the panel ("Open the fortune").
-
-Skill never changes the odds; hints only cost the third star. Balances are
-labelled "(sim)" in preview mode.
+- Press **Omikuji**: an in-game confirmation shows the price, the Friend's RF
+  before → after and the odds. **Draw** then calls `client.buy(1n)` (only when no
+  omikuji is held), `client.play(1n)` and `client.settle`; the runtime confirms
+  each paid action.
+- The draw plays a short shrine ritual: the wooden omikuji box rattles, turns
+  over, a numbered stick slides out and the paper slip unfolds (tap to skip;
+  reduced motion shows the slip at once). The slip names the result and lists
+  the moves, e.g. "1. Turn right about a quarter turn 2. Tilt up a little".
+- The moves are computed from the current angle with the moves the stage allows
+  (sideways, tilt, twist). After the slip closes, the oracle stays at the top
+  left for 30 seconds.
+- A Great Luck refund is collected from the Omikuji panel (tap the RF chip):
+  `client.redeem(1, 1n)`. An unsettled omikuji can be opened from the same panel.
+- The clock and input pause during the ritual. Drawing an omikuji costs the
+  third star on that stage. Skill never changes the odds.
 
 ## Art and credits
 
@@ -110,8 +114,8 @@ The player's own Friend is read from the SDK's canonical sprite reader (idle,
 facing down, frame 0). The 3D stage, washi and wood textures, lights and effects
 are original and generated at runtime with three.js (MIT). Music and sound
 effects are original and synthesised at runtime with Web Audio (koto and
-shakuhachi voices in the miyako-bushi scale, no noise). Title font: Yuji Boku
-(SIL OFL 1.1, subset to the title characters; see `FONT-LICENSE-OFL.txt`).
+shakuhachi voices in the miyako-bushi scale, no noise). Title and omikuji font: Yuji Boku
+(SIL OFL 1.1, subset to the characters used; see `FONT-LICENSE-OFL.txt`).
 Other text uses the system's serif and sans-serif fonts.
 
 ## Checks

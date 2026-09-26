@@ -1,10 +1,11 @@
 {
   "name": "Shadow Friends",
-  "consumable": "Lantern",
+  "consumable": "Omikuji",
   "price": "1000000000000000000",
   "outcomes": [
-    { "name": "Small Luck", "chanceBps": 6000, "reward": "500000000000000000" },
-    { "name": "Good Luck", "chanceBps": 3000, "reward": "1000000000000000000" },
-    { "name": "Great Luck", "chanceBps": 1000, "reward": "3000000000000000000" }
+    { "name": "Great Luck (Daikichi)", "chanceBps": 1000, "reward": "1000000000000000000" },
+    { "name": "Good Luck (Chukichi)", "chanceBps": 3000, "reward": "0" },
+    { "name": "Small Luck (Shokichi)", "chanceBps": 4500, "reward": "0" },
+    { "name": "Bad Luck (Kyo)", "chanceBps": 1500, "reward": "0" }
   ]
 }

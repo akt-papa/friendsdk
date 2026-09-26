@@ -46,7 +46,7 @@ button.chip:hover{border-color:var(--amber)}
 .goal{display:flex;gap:12px;align-items:flex-end}
 .card{position:relative;background:linear-gradient(160deg,#f4e7cb,#d6c095);border-radius:3px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.5);transform:rotate(-2deg)}
 .card canvas{display:block;width:84px;height:84px}
-.card span{position:absolute;top:-10px;left:-6px;background:var(--lacquer);color:var(--washi);font-family:var(--head);font-size:12px;font-weight:700;padding:1px 8px;border-radius:2px;letter-spacing:.2em}
+.card span{position:absolute;top:-10px;left:-6px;white-space:nowrap;background:var(--lacquer);color:var(--washi);font-family:var(--head);font-size:12px;font-weight:700;padding:1px 8px;border-radius:2px;letter-spacing:.2em}
 #meter{width:min(38vw,220px);display:grid;gap:4px}
 #meter .lab{display:flex;justify-content:space-between;font-size:12px;color:var(--washi-2);letter-spacing:.05em}
 #meterNum{font-variant-numeric:tabular-nums;font-family:var(--head);font-weight:700;font-size:15px;color:var(--washi)}
@@ -149,3 +149,101 @@ html[lang=en] #how .new::before{content:"NEW"}
 .sBox .kept{list-style:none;margin:0;padding:0;display:grid;gap:6px}.sBox .kept li{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .sBox .dim{color:#6b5238;font-size:12px}.sBox .err{color:#9b1c10;font-weight:700}
 @media (max-width:520px){.bottom{bottom:calc(38px + env(safe-area-inset-bottom,0px))}}
+
+/* ---- おみくじ ---- */
+.omi{position:fixed;inset:0;z-index:40;display:grid;place-items:center;cursor:pointer;outline:none;overflow:hidden}
+.omiBg{position:absolute;inset:0;background:radial-gradient(60% 60% at 50% 55%,rgba(64,34,12,.78),rgba(5,3,2,.93));animation:oFade .35s ease-out both}
+.omiStage{position:relative;display:flex;align-items:center;gap:90px;margin-left:80px;animation:oPop .4s .1s ease-out both}
+.tsBox{position:relative;width:130px;height:420px}
+.tsutsuWrap{position:absolute;left:0;top:40px;width:130px;height:270px;transform-origin:50% 50%;animation:tsFlip .45s 1.6s cubic-bezier(.5,0,.3,1.25) forwards}
+.tsutsu{position:absolute;left:5px;top:10px;width:120px;height:250px;transform-origin:50% 70%;animation:tsShake 1.2s .38s ease-in-out both}
+.tsutsu svg{width:100%;height:100%;display:block;filter:drop-shadow(0 16px 20px rgba(0,0,0,.6))}
+.tsLabel{position:absolute;left:50%;top:62px;transform:translateX(-50%);writing-mode:vertical-rl;font-family:"KageFude",serif;font-size:34px;color:#1a0e05;text-shadow:0 1px 0 rgba(255,220,170,.35)}
+.stick{position:absolute;left:59px;top:0;width:12px;height:150px;border-radius:3px;background:linear-gradient(90deg,#a98b4f,#e7d29a 45%,#b79a5c);box-shadow:0 0 0 1px #5a4520;transform:translateY(40px);animation:stickOut .4s 2.05s ease-out forwards}
+.stick::after{content:"";position:absolute;left:0;right:0;top:0;height:22px;border-radius:3px 3px 0 0;background:#b3261a}
+.stickNo{position:absolute;right:150px;top:250px;writing-mode:vertical-rl;font-family:"KageFude",serif;font-size:40px;color:#ffd27a;text-shadow:0 0 18px rgba(255,180,80,.8);white-space:nowrap;animation:oIn .35s 2.4s ease-out both}
+.omi.en .stickNo{writing-mode:horizontal-tb;font-family:var(--head);font-size:26px;top:330px;right:140px}
+.paperWrap{position:relative;width:340px;height:480px;animation:pDrop .45s 2.6s ease-out both}
+.paper{position:relative;overflow:hidden;width:100%;height:100%;background:linear-gradient(170deg,#fcf7ec,#efe2c6);box-shadow:0 22px 50px rgba(0,0,0,.65);clip-path:inset(40% 46% 40% 46%);animation:pOpen 1s 2.8s cubic-bezier(.4,0,.2,1) forwards}
+.paper::before{content:"";position:absolute;inset:12px;border:2px solid #b3261a;outline:1px solid #b3261a;outline-offset:4px;pointer-events:none}
+.paper::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 76px,rgba(120,80,30,.12) 76px 78px);pointer-events:none}
+.pIn{position:relative;box-sizing:border-box;writing-mode:vertical-rl;width:100%;height:100%;padding:34px 30px;color:#1b120c}
+.pNo{font-family:"KageFude",serif;font-size:28px;margin-left:12px}
+.pLuck{font-family:"KageFude",serif;font-size:98px;line-height:1.05;letter-spacing:.08em;margin-left:14px;animation:stamp .5s 3.45s cubic-bezier(.2,1.4,.4,1) both}
+.omi.great .pLuck{color:#b3261a;text-shadow:0 0 18px rgba(255,190,60,.55)}
+.pLines p{font-family:var(--head);font-size:17px;line-height:1.55;margin:0 0 0 4px;letter-spacing:.06em}
+.pLines b{color:#b3261a;margin-bottom:.7em;display:inline-block}
+.pPrize{position:absolute;left:30px;bottom:30px;writing-mode:horizontal-tb;font-family:var(--head);font-weight:700;font-size:15px;padding:4px 10px;border:1.5px solid #b3261a;color:#b3261a;background:rgba(255,255,255,.4)}
+.omi.en .pIn{writing-mode:horizontal-tb;padding:34px 34px}
+.omi.en .pNo{font-family:var(--head);font-size:18px;margin:0 0 6px}
+.omi.en .pLuck{font-family:var(--head);font-weight:800;font-size:44px;margin:0 0 16px;letter-spacing:.02em}
+.omi.en .pLines p{margin:0 0 8px;font-size:16px;letter-spacing:0}
+.omi.en .pLines b{display:block;margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.omi.en .pPrize{left:34px}
+.omi.great .paperWrap::before,.omi.good .paperWrap::before{content:"";position:absolute;left:50%;top:50%;width:760px;height:760px;margin:-380px 0 0 -380px;border-radius:50%;background:repeating-conic-gradient(rgba(255,214,120,.30) 0 5deg,transparent 5deg 15deg);-webkit-mask:radial-gradient(circle,#000 25%,transparent 68%);mask:radial-gradient(circle,#000 25%,transparent 68%);animation:rays 9s linear infinite,oIn .7s 3.45s ease-out both}
+.omi.good .paperWrap::before{background:repeating-conic-gradient(rgba(255,170,90,.16) 0 5deg,transparent 5deg 15deg)}
+.omiTap{position:absolute;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));text-align:center;font-size:14px;letter-spacing:.1em;color:var(--washi-2);animation:oIn .4s 3.9s both}
+.omi.out .omiBg{animation:oFadeOut .5s ease-in forwards}
+.omi.out .omiStage{animation:none}
+.omi.out .tsBox{animation:oFadeOut .3s ease-in forwards}
+.omi.out .paperWrap{animation:pAway .5s ease-in forwards}
+.omi.out .omiTap{animation:oFadeOut .2s forwards}
+.omi.rm *{animation-delay:0s!important;animation-duration:.01s!important}
+@keyframes oFade{from{opacity:0}}
+@keyframes oFadeOut{to{opacity:0}}
+@keyframes oIn{from{opacity:0}to{opacity:1}}
+@keyframes oPop{from{opacity:0;transform:translateY(24px)}}
+@keyframes tsShake{0%,100%{transform:rotate(0)}8%{transform:rotate(-15deg)}17%{transform:rotate(14deg)}26%{transform:rotate(-15deg)}35%{transform:rotate(14deg)}44%{transform:rotate(-13deg)}53%{transform:rotate(12deg)}62%{transform:rotate(-12deg)}71%{transform:rotate(11deg)}80%{transform:rotate(-7deg)}90%{transform:rotate(4deg)}}
+@keyframes tsFlip{to{transform:rotate(180deg) translateY(-30px)}}
+@keyframes stickOut{to{transform:translateY(-110px)}}
+@keyframes pDrop{from{opacity:0;transform:translateY(-40px) rotate(-3deg)}to{opacity:1;transform:none}}
+@keyframes pOpen{0%{clip-path:inset(40% 46% 40% 46%)}35%{clip-path:inset(0 46% 0 46%)}100%{clip-path:inset(0 0 0 0)}}
+@keyframes stamp{from{opacity:0;transform:scale(1.7)}to{opacity:1;transform:none}}
+@keyframes rays{to{transform:rotate(360deg)}}
+@keyframes pAway{to{opacity:0;transform:translate(34vw,-42vh) scale(.12) rotate(12deg)}}
+@media (max-width:640px){.omiStage{flex-direction:column;gap:0;zoom:.62;margin-left:0}.tsBox{height:330px}.omiTap{bottom:calc(40px + env(safe-area-inset-bottom,0px))}}
+/* ---- おみくじのお告げ(紙の中と、画面左上に30秒) ---- */
+.pHead{font-family:var(--head);font-weight:700;font-size:13px;color:#b3261a;margin-left:8px;letter-spacing:.3em}
+.pSteps{list-style:none;margin:0;padding:0}
+.pSteps li{font-family:var(--head);font-weight:700;font-size:19px;line-height:1.45;margin-left:8px;letter-spacing:.04em}
+.pSteps li.done{color:#8a5a2b;font-size:17px}
+.pSteps li i{font-style:normal;color:#b3261a;margin-bottom:.4em;display:inline-block;font-family:"KageFude",serif}
+.pKyo{font-family:var(--head);font-weight:700;font-size:22px;margin-left:12px;letter-spacing:.1em}
+.omi.kyo .pLuck{color:#3a3a44;font-size:120px}
+.omi.kyo .paper{background:linear-gradient(170deg,#eeeae2,#d9d3c6)}
+.omi.en .pHead{margin:4px 0 6px;letter-spacing:.12em;font-size:12px;text-transform:uppercase}
+.omi.en .pSteps li{margin:0 0 8px;font-size:18px;letter-spacing:0}
+.omi.en .pSteps li i{margin:0 8px 0 0}
+.omi.en .pKyo{margin:6px 0 0;font-size:19px}
+.omi.en.kyo .pLuck{font-size:44px}
+#oracle{position:fixed;left:16px;top:calc(96px + env(safe-area-inset-top,0px));z-index:6;width:min(300px,calc(100vw - 32px));background:linear-gradient(170deg,#fcf7ec,#efe2c6);color:#1b120c;border-radius:4px;box-shadow:0 14px 30px rgba(0,0,0,.55);padding:12px 16px 14px;border-top:4px solid #b3261a;pointer-events:none;animation:oPop .35s ease-out both}
+#oracle .oHead{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+#oracle .oHead b{font-family:"KageFude",var(--head),serif;font-size:26px;color:#b3261a;font-weight:400}
+html[lang=en] #oracle .oHead b{font-family:var(--head);font-weight:800;font-size:18px}
+#oracle .oHead span{font-size:11px;color:#6b5238;letter-spacing:.06em}
+#oracle ol{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+#oracle li{font-family:var(--head);font-weight:700;font-size:16px;display:flex;gap:8px;align-items:baseline}
+#oracle li i{font-style:normal;color:#b3261a;font-family:"KageFude",var(--head),serif;min-width:1em}
+#oracle.kyo{border-top-color:#3a3a44}#oracle.kyo .oHead b{color:#3a3a44}
+#oracle .oBar{height:3px;background:rgba(27,18,12,.12);margin-top:10px;border-radius:2px;overflow:hidden}
+#oracle .oBar i{display:block;height:100%;background:#b3261a;transform-origin:left}
+@media (max-width:640px){#oracle{top:calc(128px + env(safe-area-inset-top,0px));width:calc(100vw - 32px)}#oracle li{font-size:14px}}
+.omi:not(.en) .pLuck{font-size:86px;margin-left:10px}.omi:not(.en) .pNo{font-size:24px;margin-left:8px}.omi.kyo:not(.en) .pLuck{font-size:110px}
+#oracle li.done{color:#8a5a2b;font-size:14px}
+
+/* ---- おみくじの紙(横に広げた形): 番号・結果・お告げ・運勢8項目 ---- */
+.paperWrap{width:640px;height:440px}
+.omi:not(.en) .pIn{display:block}
+.pMain{display:block}
+.pSep{width:0;margin:0 12px;border-left:1.5px solid rgba(179,38,26,.5);height:86%;align-self:center}
+.omi:not(.en) .pSep{display:inline-block;height:auto;border-left:none;border-top:none;margin:0 14px 0 6px;width:1px;background:rgba(179,38,26,.5);block-size:1px;inline-size:100%}
+.pFort{list-style:none;margin:0;padding:0}
+.pFort li{font-family:var(--head);font-size:15px;line-height:1.5;margin-left:3px;letter-spacing:.04em;color:#2a1c10}
+.pFort li b{color:#b3261a;margin-bottom:.5em;display:inline-block;font-weight:700}
+.omi.en .pIn{display:grid;grid-template-columns:1.1fr 1fr;grid-template-rows:auto auto 1fr;column-gap:26px}
+.omi.en .pNo,.omi.en .pLuck,.omi.en .pMain{grid-column:1}
+.omi.en .pSep{display:none}
+.omi.en .pFort{grid-column:2;grid-row:1 / span 3;align-self:start;border-left:1.5px solid rgba(179,38,26,.4);padding-left:18px}
+.omi.en .pFort li{margin:0 0 6px;font-size:13.5px;letter-spacing:0;line-height:1.35}
+.omi.en .pFort li b{display:block;margin:0;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase}
+@media (max-width:640px){.omiStage{zoom:.56}.tsBox{height:300px}}
